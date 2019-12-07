@@ -1,0 +1,42 @@
+clear;
+%system definition
+A=[-1.3410 0.9933 0 -0.1689 -0.2518; 
+    43.2230 -0.8693 0 -17.2510 -1.5766;
+    1.3410 0.0067 0 0.1689 0.2518;
+    0 0 0 -20 0;
+    0 0 0 0 -20];
+B= [ 0 0;
+    0 0;
+    0 0;
+    20 0;
+    0 20];
+C=[1 0 0 0 0;0 0 1 0 0];
+D=zeros(2);
+E=[1 0 0 0 0;
+    0 1 0 0 0;
+    0 0 0 0 0;
+    0 0 0 0 0 ;
+    0 0 0 0 1];
+[Ax, Ay]=size(A);
+[Cx, Cy]=size(C);
+[Dx, Dy]=size(D);
+
+X=sdpvar(Ax,Ay);
+
+F=[];
+F=[F;E'*X-X'*E==0];
+F=[F;X'*E>=0];
+
+eta=1e-6;
+mat=[X'*A+A'*X X'*B-C';
+    (X'*B-C')' -(D'+D)];
+F=[F;mat<=-eta*eye(size(mat))];
+opt=sdpsettings('solver','sedumi','verbose',0);
+output=optimize(F,[],opt);
+if output.problem==0
+    disp("The system is Extended Strictly Positive Real");
+else
+    disp("The system is not Extended Stictly Positive Real");
+end
+     
+     
