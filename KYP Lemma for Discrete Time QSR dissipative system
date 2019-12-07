@@ -27,8 +27,8 @@ R=-gamma*eye(Dx,Dy);
 eps=1e-9;
 F=[];
 F=[F;P>=eps*eye(Ax,Ay)];
-F=[F;[P*Ad+Ad'*P-Cd'*Q*Cd P*Bd-Cd'*S-Cd'*Q*Dd;
-   (P*Bd-Cd'*S-Cd'*Q*Dd)' -Dd'*Q*Dd-(Dd'*S+S'*Dd)-R]<=0];
+F=[F;[Ad'*P*Ad-P-Cd'*Q*Cd Ad'*P*Bd-Cd'*S-Cd'*Q*Dd;
+   (Ad'*P*Bd-Cd'*S-Cd'*Q*Dd)' Bd'*P*Bd-Dd'*Q*Dd-(Dd'*S+S'*Dd)-R]<=0];
 
 opt=sdpsettings('solver','sedumi','verbose',0);
 output=optimize(F,[],opt);
