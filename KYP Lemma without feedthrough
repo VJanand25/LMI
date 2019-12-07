@@ -1,0 +1,29 @@
+clear;
+%system definition
+A=[-1.3410 0.9933 0 -0.1689 -0.2518; 
+    43.2230 -0.8693 0 -17.2510 -1.5766;
+    1.3410 0.0067 0 0.1689 0.2518;
+    0 0 0 -20 0;
+    0 0 0 0 -20];
+B= [ 0 0;
+    0 0;
+    0 0;
+    20 0;
+    0 20];
+C=[1 0 0 0 0;0 0 1 0 0];
+D=zeros(2);
+
+[Ax, Ay]=size(A);
+[Cx, Cy]=size(C);
+[Dx, Dy]=size(D);
+P = sdpvar(Ax,Ay);
+F=[P>=0;
+    P*A+A'*P>=0;
+    P*B==C'];
+opt=sdpsettings('solver','sedumi','verbose',0);
+output=optimize(F,[],opt);
+if output.problem==0
+    disp("The system is positive real");
+else
+    disp("The system is not positive real");
+end
