@@ -1,0 +1,31 @@
+clear;
+%system definition
+Ad=[-1.3410 0.9933 0 -0.1689 -0.2518; 
+    43.2230 -0.8693 0 -17.2510 -1.5766;
+    1.3410 0.0067 0 0.1689 0.2518;
+    0 0 0 -20 0;
+    0 0 0 0 -20];
+Bd= [ 0 0;
+    0 0;
+    0 0;
+    20 0;
+    0 20];
+Cd=[1 0 0 0 0;0 0 1 0 0];
+Dd=zeros(2);
+
+[Ax, Ay]=size(Ad);
+[Cx, Cy]=size(Cd);
+[Dx, Dy]=size(Dd);
+P = sdpvar(Ax,Ay);
+gamma=sdpvar(1,1);
+
+
+eps=1e-9;
+F=[];
+F=[F;P>=eps*eye(Ax,Ay)];
+F=[F;[Ad'*P*Ad-P Ad'*P*Bd-Cd'*Dd ;
+   (Ad'*P*Bd-Cd'*Dd)' Bd'*P*Bd-gamma*eye(Cx,Cx)-(Dd'*Dd)]<=0];
+
+opt=sdpsettings('solver','sedumi','verbose',0);
+output=optimize(F,gamma,opt);
+minimum_gain=sqrt(value(gamma))
